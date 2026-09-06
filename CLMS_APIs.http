@@ -1,0 +1,176 @@
+@CLMS_APIs_HostAddress = http://localhost:5191
+@authToken = your_jwt_token_here
+
+### 1. Test Login with Valid Credentials
+POST {{CLMS_APIs_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "admin",
+  "password": "password123"
+}
+
+### 2. Test Login with Missing Fields (400 Bad Request)
+POST {{CLMS_APIs_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "",
+  "password": ""
+}
+
+### 3. Test Login with Invalid Credentials (401 Unauthorized)
+POST {{CLMS_APIs_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "nonexistent_user",
+  "password": "wrong_password"
+}
+
+### 4. GET All Companies (Ordered by Name)
+GET {{CLMS_APIs_HostAddress}}/api/companies
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 5. GET Company By ID
+GET {{CLMS_APIs_HostAddress}}/api/companies/1
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 6. POST Create New Company
+POST {{CLMS_APIs_HostAddress}}/api/companies
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="CompanyName"
+
+ABC Infra Private Limited
+--boundary
+Content-Disposition: form-data; name="CompanyAddress"
+
+Plot No. 45, Industrial Area, Phase II
+--boundary
+Content-Disposition: form-data; name="Email"
+
+contact@abcinfra.com
+--boundary
+Content-Disposition: form-data; name="Phone"
+
++91-9876543210
+--boundary
+Content-Disposition: form-data; name="ContactPerson"
+
+Rajesh Sharma
+--boundary
+Content-Disposition: form-data; name="GressTime"
+
+15
+--boundary
+Content-Disposition: form-data; name="RegFingerCount"
+
+2
+--boundary--
+
+### 7. PUT Update Company
+PUT {{CLMS_APIs_HostAddress}}/api/companies/2
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="CompanyName"
+
+ABC Infrastructure Tech Ltd
+--boundary
+Content-Disposition: form-data; name="CompanyAddress"
+
+Plot No. 45, New Industrial Area, Phase II
+--boundary
+Content-Disposition: form-data; name="Email"
+
+info@abcinfra.com
+--boundary
+Content-Disposition: form-data; name="ContactPerson"
+
+Rajesh Kumar Sharma
+--boundary--
+
+### 8. DELETE Company
+DELETE {{CLMS_APIs_HostAddress}}/api/companies/2
+Authorization: Bearer {{authToken}}
+
+### 9. GET All Contractors (All Statuses)
+GET {{CLMS_APIs_HostAddress}}/api/contractors
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 10. GET Active Contractors (ValidDt >= today)
+GET {{CLMS_APIs_HostAddress}}/api/contractors?active=true
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 11. GET Inactive / Expired Contractors (ValidDt < today)
+GET {{CLMS_APIs_HostAddress}}/api/contractors?active=false
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 12. GET Contractor Types Lookup
+GET {{CLMS_APIs_HostAddress}}/api/contractors/lookup/types
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 13. GET Contractor By ID
+GET {{CLMS_APIs_HostAddress}}/api/contractors/1
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 14. POST Create Contractor (JSON)
+POST {{CLMS_APIs_HostAddress}}/api/contractors
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Apex Engineering Solutions",
+  "address": "Plot 12, MIDC Industrial Area, Pune",
+  "phone": "+91 20 2712 3456",
+  "email": "contact@apexeng.com",
+  "description": "Mechanical and civil maintenance",
+  "esiPay": true,
+  "pfPay": true,
+  "salPayFlag": true,
+  "contPerNm": "Suresh Patil",
+  "contPerPhone": "+91 9823012345",
+  "stdLStrength": 50,
+  "validDt": "2027-12-31T00:00:00Z",
+  "licNo": "LIC-MH-2026-9901",
+  "adharNo": "987654321012",
+  "panNo": "ABCDE1234F"
+}
+
+### 15. POST Create Contractor Duplicate Test (409 Conflict with field identifier)
+POST {{CLMS_APIs_HostAddress}}/api/contractors
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Apex Engineering Solutions",
+  "licNo": "LIC-MH-2026-9901",
+  "adharNo": "987654321012",
+  "panNo": "ABCDE1234F"
+}
+
+### 16. DELETE Contractor (Check 409 Conflict if active employees linked)
+DELETE {{CLMS_APIs_HostAddress}}/api/contractors/1
+Authorization: Bearer {{authToken}}
+
+### 17. WeatherForecast Sample
+GET {{CLMS_APIs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
