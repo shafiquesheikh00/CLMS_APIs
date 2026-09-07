@@ -2,6 +2,7 @@ using System.Text;
 using CLMS_APIs.Data;
 using CLMS_APIs.Models.Entities;
 using CLMS_APIs.Services;
+using CLMS_APIs.Services.RateMaster;
 using CLMS_APIs.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,6 +34,7 @@ builder.Services.AddScoped<IContractorService, ContractorService>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
 builder.Services.AddScoped<IOtherMasterService, OtherMasterService>();
 builder.Services.AddScoped<IShiftService, ShiftService>();
+builder.Services.AddScoped<IRateMasterService, RateMasterService>();
 
 // 4. Configure CORS for React Client
 builder.Services.AddCors(options =>
@@ -223,6 +225,54 @@ using (var scope = app.Services.CreateScope())
                     Shift_Flag BIT NULL DEFAULT 0,
                     ShiftHours DECIMAL(18,2) NULL,
                     GressTime FLOAT NULL DEFAULT 0
+                );
+            END
+
+            -- Ensure LabourRateMaster table exists
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'LabourRateMaster')
+            BEGIN
+                CREATE TABLE LabourRateMaster (
+                    RID NUMERIC(18,0) PRIMARY KEY,
+                    RdateFrom SMALLDATETIME NULL,
+                    Rdateto SMALLDATETIME NULL,
+                    LabourCatID INT NULL,
+                    RatePerDay NUMERIC(18,2) NULL,
+                    RateOTPerHour NUMERIC(18,2) NULL,
+                    Basic DECIMAL(18,2) NULL,
+                    Special_Allowance DECIMAL(18,2) NULL,
+                    HRA DECIMAL(18,2) NULL,
+                    Other_Allowance DECIMAL(18,2) NULL,
+                    LogID INT NULL,
+                    LogDt SMALLDATETIME NULL,
+                    HRAPER DECIMAL(18,2) NULL,
+                    BonusPER DECIMAL(18,2) NULL,
+                    Bonus DECIMAL(18,2) NULL,
+                    LWW DECIMAL(18,2) NULL,
+                    gross DECIMAL(18,2) NULL,
+                    PFPER DECIMAL(18,2) NULL,
+                    PF DECIMAL(18,2) NULL,
+                    Attendance_Allow_App_After INT NULL,
+                    Attendance_Allow_Rs DECIMAL(18,2) NULL,
+                    DA DECIMAL(18,2) NULL,
+                    DAPER DECIMAL(18,2) NULL,
+                    P_F DECIMAL(18,2) NULL,
+                    ESI DECIMAL(18,2) NULL,
+                    PT DECIMAL(18,2) NULL,
+                    Advance DECIMAL(18,2) NULL,
+                    LIC DECIMAL(18,2) NULL,
+                    LWF DECIMAL(18,2) NULL,
+                    EducationAllowance DECIMAL(18,0) NULL,
+                    Other_All DECIMAL(18,0) NULL,
+                    Attendance_Allow_App_After2 INT NULL,
+                    Attendance_Allow_Rs2 DECIMAL(18,2) NULL,
+                    PFApply NVARCHAR(50) NULL,
+                    ESICApply NVARCHAR(50) NULL,
+                    PTApply NVARCHAR(50) NULL,
+                    Attendance_Allow_Rs3 DECIMAL(18,2) NULL,
+                    Attendance_Allow_App_After3 INT NULL,
+                    Stipend DECIMAL(18,2) NULL,
+                    ServiceCharge DECIMAL(18,0) NULL,
+                    EmpCategoryFlag NVARCHAR(10) NULL
                 );
             END
 ");

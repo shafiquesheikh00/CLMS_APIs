@@ -349,5 +349,106 @@ Accept: application/json
 DELETE {{CLMS_APIs_HostAddress}}/api/shifts/1
 Authorization: Bearer {{authToken}}
 
+### 39. GET Rate Master Categories (Labour Type Master from OtherMaster)
+GET {{CLMS_APIs_HostAddress}}/api/rate-master/categories
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 40. GET Rate Master List (Labour categoryType, paginated)
+GET {{CLMS_APIs_HostAddress}}/api/rate-master?categoryType=Labour&pageNumber=1&pageSize=20
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 41. GET Rate Master List (Employee categoryType, paginated)
+GET {{CLMS_APIs_HostAddress}}/api/rate-master?categoryType=Employee&pageNumber=1&pageSize=20
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 42. GET Single Rate Master by RID
+GET {{CLMS_APIs_HostAddress}}/api/rate-master/1
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 43. POST Create Rate Master (Labour)
+POST {{CLMS_APIs_HostAddress}}/api/rate-master
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "rdateFrom": "2026-04-01T00:00:00Z",
+  "rdateTo": "2027-03-31T00:00:00Z",
+  "labourCatId": 1,
+  "basic": 600.00,
+  "specialAllowance": 50.00,
+  "hra": 100.00,
+  "otherAllowance": 25.00,
+  "rateOTPerHour": 125.00,
+  "hrAper": 0,
+  "bonusPer": 0,
+  "bonus": 0,
+  "lww": 0,
+  "pfper": 0,
+  "pf": 0,
+  "attendanceAllowAppAfter": 0,
+  "attendanceAllowRs": 0,
+  "da": 0,
+  "daper": 0,
+  "pF_Deduction": 0,
+  "esi": 0,
+  "pt": 0,
+  "advance": 0,
+  "lic": 0,
+  "lwf": 0,
+  "educationAllowance": 0,
+  "otherAll": 0,
+  "attendanceAllowAppAfter2": 0,
+  "attendanceAllowRs2": 0,
+  "pfapply": false,
+  "esicapply": false,
+  "ptapply": false,
+  "attendanceAllowRs3": 0,
+  "attendanceAllowAppAfter3": 0,
+  "stipend": 0,
+  "serviceCharge": 0,
+  "empCategoryFlag": "Labour"
+}
+
+### 44. POST Create Overlapping Rate (409 Conflict)
+POST {{CLMS_APIs_HostAddress}}/api/rate-master
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "rdateFrom": "2026-06-01T00:00:00Z",
+  "rdateTo": "2026-12-31T00:00:00Z",
+  "labourCatId": 1,
+  "basic": 700.00,
+  "empCategoryFlag": "Labour"
+}
+
+### 45. PUT Update Rate Master
+PUT {{CLMS_APIs_HostAddress}}/api/rate-master/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "rdateFrom": "2026-04-01T00:00:00Z",
+  "rdateTo": "2027-03-31T00:00:00Z",
+  "labourCatId": 1,
+  "basic": 650.00,
+  "specialAllowance": 60.00,
+  "hra": 110.00,
+  "otherAllowance": 30.00,
+  "empCategoryFlag": "Labour"
+}
+
+### 46. DELETE Rate Master
+DELETE {{CLMS_APIs_HostAddress}}/api/rate-master/1?categoryType=Labour
+Authorization: Bearer {{authToken}}
+
+
 
 
