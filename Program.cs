@@ -2,6 +2,8 @@ using System.Text;
 using CLMS_APIs.Data;
 using CLMS_APIs.Models.Entities;
 using CLMS_APIs.Services;
+using CLMS_APIs.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +16,12 @@ builder.Services.AddControllers();
 
 // 2. Configure Database Context (Entity Framework Core SQL Server)
 builder.Services.AddDbContext<ClmsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.SqlServerEventId.DecimalTypeKeyWarning));
+});
+
+builder.Services.AddValidatorsFromAssemblyContaining<OtherMasterCreateDtoValidator>();
 
 // 3. Register Application Services (Clean Architecture)
 builder.Services.AddScoped<IPasswordVerifier, PlainTextPasswordVerifier>();
@@ -23,6 +30,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IContractorService, ContractorService>();
+builder.Services.AddScoped<IHolidayService, HolidayService>();
+builder.Services.AddScoped<IOtherMasterService, OtherMasterService>();
+builder.Services.AddScoped<IShiftService, ShiftService>();
 
 // 4. Configure CORS for React Client
 builder.Services.AddCors(options =>
@@ -177,6 +187,44 @@ using (var scope = app.Services.CreateScope())
                 ALTER TABLE ContractorMaster ADD PO_ValidFrom DATETIME NULL;
             IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'ContractorMaster' AND COLUMN_NAME = 'PO_ValidTo')
                 ALTER TABLE ContractorMaster ADD PO_ValidTo DATETIME NULL;
+
+            -- Ensure HolidayMaster table exists
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'HolidayMaster')
+            BEGIN
+                CREATE TABLE HolidayMaster (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    HolidayDate DATETIME NOT NULL,
+                    Holiday_Desc NVARCHAR(50) NOT NULL,
+                    Ispaid BIT NOT NULL
+                );
+            END
+
+            -- Ensure OtherMaster table exists
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'OtherMaster')
+            BEGIN
+                CREATE TABLE OtherMaster (
+                    MasterTypeID INT IDENTITY(1,1) PRIMARY KEY,
+                    MasterID INT NOT NULL,
+                    MasterName VARCHAR(50) NOT NULL,
+                    Description VARCHAR(200) NULL,
+                    Status BIT NOT NULL DEFAULT 1,
+                    MasterType NVARCHAR(150) NOT NULL
+                );
+            END
+
+            -- Ensure ShiftMaster table exists
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ShiftMaster')
+            BEGIN
+                CREATE TABLE ShiftMaster (
+                    ShiftID NUMERIC(18,0) PRIMARY KEY,
+                    ShiftName VARCHAR(50) NOT NULL,
+                    Start_Time DATETIME NOT NULL,
+                    End_Time DATETIME NOT NULL,
+                    Shift_Flag BIT NULL DEFAULT 0,
+                    ShiftHours DECIMAL(18,2) NULL,
+                    GressTime FLOAT NULL DEFAULT 0
+                );
+            END
 ");
     }
     catch (Exception ex)
@@ -187,16 +235,24 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.EnablePersistAuthorization();
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "CLMS Web APIs v1");
+    c.EnablePersistAuthorization();
+});
 
-app.UseHttpsRedirection();
+// Redirect root to swagger UI
+app.MapGet("/", () => Results.Redirect("/swagger"));
+
+// Ensure wwwroot directory exists
+var webRoot = app.Environment.WebRootPath;
+if (string.IsNullOrWhiteSpace(webRoot))
+{
+    webRoot = Path.Combine(app.Environment.ContentRootPath, "wwwroot");
+}
+Directory.CreateDirectory(webRoot);
+Directory.CreateDirectory(Path.Combine(webRoot, "uploads", "company-logos"));
 
 // Serve static files (including company logos from wwwroot)
 app.UseStaticFiles();

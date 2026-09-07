@@ -94,7 +94,7 @@ public class ContractorService : IContractorService
             .OrderBy(o => o.MasterType ?? o.Description)
             .Select(o => new ContractorTypeLookupDto
             {
-                Id = (o.MasterTypeId ?? o.MasterId).ToString(),
+                Id = o.MasterTypeId.ToString(),
                 Name = o.MasterType ?? o.Description ?? ("Type " + o.MasterId)
             })
             .ToListAsync(cancellationToken);

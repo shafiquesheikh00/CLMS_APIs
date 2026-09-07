@@ -169,8 +169,185 @@ Accept: application/json
 DELETE {{CLMS_APIs_HostAddress}}/api/contractors/1
 Authorization: Bearer {{authToken}}
 
-### 17. WeatherForecast Sample
-GET {{CLMS_APIs_HostAddress}}/weatherforecast/
+### 18. GET All Holidays (Optionally filtered by year)
+GET {{CLMS_APIs_HostAddress}}/api/holidays?year=2026
+Authorization: Bearer {{authToken}}
 Accept: application/json
 
-###
+### 19. GET Holiday By ID
+GET {{CLMS_APIs_HostAddress}}/api/holidays/1
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 20. POST Create New Holiday
+POST {{CLMS_APIs_HostAddress}}/api/holidays
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "holidayDate": "2026-10-02T00:00:00Z",
+  "holidayDesc": "Gandhi Jayanti",
+  "isPaid": true
+}
+
+### 21. POST Create Duplicate Date Holiday (409 Conflict)
+POST {{CLMS_APIs_HostAddress}}/api/holidays
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "holidayDate": "2026-10-02T00:00:00Z",
+  "holidayDesc": "Duplicate Holiday",
+  "isPaid": false
+}
+
+### 22. PUT Update Holiday
+PUT {{CLMS_APIs_HostAddress}}/api/holidays/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "holidayDate": "2026-10-02T00:00:00Z",
+  "holidayDesc": "Mahatma Gandhi Jayanti (National Holiday)",
+  "isPaid": true
+}
+
+### 23. DELETE Holiday
+DELETE {{CLMS_APIs_HostAddress}}/api/holidays/1
+Authorization: Bearer {{authToken}}
+
+### 24. GET All OtherMaster Categories (for category dropdown)
+GET {{CLMS_APIs_HostAddress}}/api/other-master/categories
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 25. GET All OtherMaster entries (Optionally filtered by masterId)
+GET {{CLMS_APIs_HostAddress}}/api/other-master?masterId=1
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 26. GET OtherMaster Lookup by category name (e.g. Contractor Type)
+GET {{CLMS_APIs_HostAddress}}/api/other-master/lookup/Contractor%20Type
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 27. GET OtherMaster entry by MasterTypeId
+GET {{CLMS_APIs_HostAddress}}/api/other-master/1
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 28. POST Create OtherMaster under EXISTING Category
+POST {{CLMS_APIs_HostAddress}}/api/other-master
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "masterId": 1,
+  "masterType": "Civil & Structural",
+  "description": "Civil contracting works"
+}
+
+### 29. POST Create OtherMaster under NEW Category
+POST {{CLMS_APIs_HostAddress}}/api/other-master
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "masterId": null,
+  "newMasterName": "Department",
+  "masterType": "Maintenance",
+  "description": "Plant maintenance department"
+}
+
+### 30. PUT Update OtherMaster entry
+PUT {{CLMS_APIs_HostAddress}}/api/other-master/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "masterType": "Civil Maintenance & Construction",
+  "description": "Updated civil maintenance description"
+}
+
+### 31. DELETE OtherMaster entry
+DELETE {{CLMS_APIs_HostAddress}}/api/other-master/1
+Authorization: Bearer {{authToken}}
+
+### 32. GET All Shifts
+GET {{CLMS_APIs_HostAddress}}/api/shifts
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 33. GET Shift By ID
+GET {{CLMS_APIs_HostAddress}}/api/shifts/1
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 34. POST Create Same-Day Shift (General Shift 09:00 -> 17:30 = 8.50 hours)
+POST {{CLMS_APIs_HostAddress}}/api/shifts
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "shiftName": "General Shift",
+  "startTime": "09:00",
+  "endTime": "17:30",
+  "isOvernight": false,
+  "graceTime": 15
+}
+
+### 35. POST Create Overnight Shift (Night Shift 22:00 -> 06:00 = 8.00 hours)
+POST {{CLMS_APIs_HostAddress}}/api/shifts
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "shiftName": "Night Shift",
+  "startTime": "22:00",
+  "endTime": "06:00",
+  "isOvernight": true,
+  "graceTime": 10
+}
+
+### 36. POST Create Invalid Same-Day Shift (End < Start without overnight flag -> 400 Bad Request)
+POST {{CLMS_APIs_HostAddress}}/api/shifts
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "shiftName": "Invalid Shift",
+  "startTime": "20:00",
+  "endTime": "05:00",
+  "isOvernight": false,
+  "graceTime": 0
+}
+
+### 37. PUT Update Shift
+PUT {{CLMS_APIs_HostAddress}}/api/shifts/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "shiftName": "General Morning Shift",
+  "startTime": "08:30",
+  "endTime": "17:00",
+  "isOvernight": false,
+  "graceTime": 15
+}
+
+### 38. DELETE Shift
+DELETE {{CLMS_APIs_HostAddress}}/api/shifts/1
+Authorization: Bearer {{authToken}}
+
+
+
