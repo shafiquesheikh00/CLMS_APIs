@@ -7,24 +7,28 @@ namespace CLMS_APIs.Models.Entities;
 public class OtherMaster
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Column("MasterTypeID")]
+    public int MasterTypeId { get; set; }
+
+    [Required]
     [Column("MasterID")]
     public int MasterId { get; set; }
 
+    [Required]
     [Column("MasterName", TypeName = "varchar(50)")]
     [MaxLength(50)]
-    public string? MasterName { get; set; }
+    public string MasterName { get; set; } = string.Empty;
 
-    [Column("Description", TypeName = "varchar(50)")]
-    [MaxLength(50)]
+    [Column("Description", TypeName = "varchar(200)")]
+    [MaxLength(200)]
     public string? Description { get; set; }
 
     [Column("Status")]
-    public bool? Status { get; set; }
+    public bool? Status { get; set; } = true;
 
-    [Column("MasterTypeID")]
-    public int? MasterTypeId { get; set; }
-
-    [Column("MasterType", TypeName = "nvarchar(50)")]
-    [MaxLength(50)]
-    public string? MasterType { get; set; }
+    [Required]
+    [Column("MasterType", TypeName = "nvarchar(150)")]
+    [MaxLength(150)]
+    public string MasterType { get; set; } = string.Empty;
 }
